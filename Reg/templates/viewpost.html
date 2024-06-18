@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if post %}{{ post.title }}{% else %}Post Not Found{% endif %}</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Additional CSS styles */
+        /* Reset default browser styles */
+        body, h1, h2, h3, p, ul, li {
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Set a modern font */
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            background-color: #1d1f21;
+            color: #fff;
+        }
+
+        /* Center the content */
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #2c2f33;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Comments section */
+        .comment-card {
+            background-color: #40444b;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            transition: transform 0.3s;
+        }
+
+        .comment-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-title {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #00aaff;
+        }
+
+        .card-text {
+            font-size: 16px;
+            color: #fff;
+        }
+
+        .btn-primary {
+            background-color: #00aaff;
+            border: none;
+            transition: background-color 0.3s;
+        }
+
+        .btn-primary:hover {
+            background-color: #008ecc;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        {% if post %}
+            <!-- Display post content -->
+            <div class="row">
+                <div class="col-md-8 offset-md-2">
+                    <div class="comment-card mt-3">
+                        <div class="card-body">
+                            <h1 class="card-title">{{ post.title }}</h1>
+                            <p class="card-text">By {{ post.user.userprofile.username }}</p>
+                            <p class="card-text">Published on {{ post.time }}, {{ post.date }}</p>
+                            <p class="card-text">{{ post.content }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Comments section -->
+            <div class="row">
+                <div class="col-md-8 offset-md-2">
+                    <div class="comment-card mt-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Comments</h5>
+                            <form method="post" action=".">
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    <input type="text" class="form-control" name="commentdata" placeholder="Write my comment">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Post</button>
+                            </form>
+                        </div>
+                    </div>
+                    {% if comments %}
+                        {% for comment in comments %}
+                            <div class="comment-card mt-3">
+                                <div class="card-body">
+                                    <p class="card-text">{{ comment.content }}</p>
+                                    <p class="card-text">By: {{ comment.user.userprofile.username }}</p>
+                                    <p class="card-text">Date: {{ comment.date }}</p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        {% else %}
+            <!-- Post not found message -->
+            <div class="row">
+                <div class="col-md-8 offset-md-2">
+                    <div class="comment-card mt-3">
+                        <div class="card-body">
+                            <h1 class="card-title">Post Not Found</h1>
+                            <p class="card-text">Sorry, we couldn't find the blog post with slug: {{ slug }}</p>
+                            <a href="/scroll" class="btn btn-primary">Go back to the homepage</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Reset default browser styles */
+        body, h1, h2, h3, p, ul, li {
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Set a modern font */
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            background-color: #1d1f21;
+            color: #fff;
+        }
+
+        /* Center the content */
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        /* Style the user profile section */
+        .user-profile {
+            background-color: #2c2f33;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .user-profile h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #00aaff;
+        }
+
+        .user-profile h2 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #b0b3b8;
+        }
+
+        /* Style the post cards */
+        .post-card {
+            background-color: #2c2f33;
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .post-card h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #00aaff;
+        }
+
+        .post-card p {
+            font-size: 14px;
+            color: #b0b3b8;
+        }
+
+        /* Style the post slugs */
+        .post-list {
+            list-style: none;
+            margin-top: 20px;
+        }
+
+        .post-list a {
+            text-decoration: none;
+            color: #00aaff;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.2s ease;
+        }
+
+        .post-list a:hover {
+            border-color: #00aaff;
+            color: #fff;
+        }
+
+        /* Style the error message */
+        .error-message {
+            font-size: 18px;
+            color: #ff5555;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        {% if user %}
+        <div class="user-profile">
+            <h1>{{ user.username }}</h1>
+            <h2>{{ user.user.first_name }} {{ user.user.last_name }}</h2>
+        </div>
+        {% else %}
+        <div class="error-message">
+            <p> User not found for username: {{ username }} </p>
+            <!-- Button to go back to the homepage -->
+            <a href="/scroll" class="btn btn-primary">Go back to the homepage</a>
+        </div>
+        {% endif %}
+        {% for post in posts %}
+        <div class="post-card">
+            <h3>{{ post.title }}</h3>
+            <p>{{ post.content }}</p>
+            <ul class="post-list">
+                <li><a href="#">{{ post.slug }}</a></li>
+            </ul>
+        </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

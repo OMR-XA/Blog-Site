@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Modern Home Page</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Custom CSS -->
+    <style>
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            background-color: #1d1f21;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            background-color: #333;
+        }
+        .navbar a {
+            color: #fff;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+        .navbar a:hover {
+            color: #f8f9fa;
+        }
+        .container {
+            padding-top: 20px;
+        }
+        .blog-post {
+            background-color: #2c2f33;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .blog-title a {
+            font-size: 24px;
+            font-weight: bold;
+            color: #00aaff;
+            text-decoration: none;
+        }
+        .blog-title a:hover {
+            text-decoration: underline;
+        }
+        .blog-content {
+            font-size: 16px;
+            color: #b0b3b8;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+        .read-more {
+            display: none;
+        }
+        .read-more-link {
+            color: #00aaff;
+            font-size: 16px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .read-more-link:hover {
+            text-decoration: underline;
+        }
+        .username-link {
+            color: #00aaff;
+            text-decoration: none;
+        }
+        .username-link:hover {
+            text-decoration: underline;
+        }
+        .comment-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .comment-input {
+            flex: 1;
+            background-color: #444;
+            border: 1px solid #555;
+            color: #fff;
+            padding: 10px;
+            border-radius: 10px;
+        }
+        .btn-comment, .btn-upload-photo, .btn-view-comments {
+            background-color: #00aaff;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            padding: 10px 20px;
+            border-radius: 10px;
+            white-space: nowrap;
+        }
+        .btn-comment:hover, .btn-upload-photo:hover, .btn-view-comments:hover {
+            background-color: #008ecc;
+        }
+        .btn-upload-photo {
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-upload-photo input[type="file"] {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+        .comment-list {
+            margin-top: 10px;
+            background-color: #3a3d41;
+            padding: 10px;
+            border-radius: 8px;
+            display: none; /* Initially hidden */
+        }
+        .comment-card {
+            margin-top: 10px;
+            background-color: #444;
+            border: 1px solid #555;
+            padding: 15px;
+            border-radius: 10px;
+            color: #fff;
+        }
+        .back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #00aaff;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 24px;
+            cursor: pointer;
+            display: none;
+        }
+        .back-to-top:hover {
+            background-color: #008ecc;
+        }
+        .error-message {
+            color: red;
+            font-size: 18px;
+            margin-top: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">My Site</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item"><a class="nav-link" href='/update'>My Account</a></li>
+                    <li class="nav-item"><a class="nav-link" href='/mysettings'>Settings</a></li>
+                    <li class="nav-item"><a class="nav-link" href='/myblogposts'>My Blog Posts</a></li>
+                    <li class="nav-item"><a class="nav-link" href='/search'>Search</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Blog Posts -->
+        {% for post in Posts %}
+        <div class="blog-post">
+            <div>{{ post.date }} at {{ post.time }}</div>
+            <div><a href='/look-{{ post.user.userprofile.username }}' class="username-link">{{ post.user.first_name }} {{ post.user.last_name }}</a></div>
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="blog-title"><a href='/view-{{ post.slug }}'>{{ post.title }}</a></div>
+                    <div class="blog-content">
+                        {{ post.content|truncatewords:50 }}
+                        {% if post.content|wordcount > 50 %}
+                        <span class="read-more"><a href="#" class="read-more-link">Read More</a></span>
+                        {% endif %}
+                    </div>
+                    <!-- Error Message -->
+                    {% if error_post_id == post.id and message %}
+                    <div class="error-message">{{ message }}</div>
+                    {% endif %}
+                    <form method="post" action="." class="comment-section" enctype="multipart/form-data"> {% csrf_token %}
+                        <input type="text" class="comment-input" placeholder="Write a comment..." name="comment-data">
+                        <button class="btn-comment" name="postc{{ post.id }}" type="submit">Post</button>
+                        <label class="btn-upload-photo">
+                            <input type="file" name="pic" accept="image/*">
+                            Upload Photo
+                        </label>
+                        <button class="btn-view-comments" type="button" data-post-id="{{ post.id }}">View Comments</button>
+                    </form>
+                    <div class="comment-list" id="comments-{{ post.id }}">
+                        {% for comment in post.comment_set.all %}
+                        <div class="comment-card">
+                            <strong>{{ comment.user.userprofile.username }}</strong> <span>({{ comment.date }} at {{ comment.time }})</span>
+                            <p>{{ comment.content }}</p>
+                            {% if comment.photo %}
+                            <img src="{{ comment.photo.url }}" alt="Comment Photo" style="max-width: 100%; border-radius: 8px; margin-top: 10px;">
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                        {% if not post.comment_set.all %}
+                        <div>No comments yet</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <button class="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'});">↑</button>
+
+    <!-- Bootstrap JS (optional) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('.btn-view-comments').on('click', function() {
+                var postId = $(this).data('post-id');
+                var commentList = $('#comments-' + postId);
+                
+                commentList.slideToggle();
+            });
+
+            $(window).on('scroll', function() {
+                var backToTopButton = $('.back-to-top');
+                if ($(window).scrollTop() > 300) {
+                    backToTopButton.fadeIn();
+                } else {
+                    backToTopButton.fadeOut();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

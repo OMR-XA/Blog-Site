@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Form</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        /* Reset default browser styles */
+        body, h1, h2, h3, p, ul, li {
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Set a modern font */
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            background-color: #1d1f21;
+            color: #fff;
+        }
+
+        /* Center the content */
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .search-form {
+            background-color: #2c2f33;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .search-form:hover {
+            transform: translateY(-5px);
+        }
+
+        .search-form h1 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #00aaff;
+        }
+
+        .search-form input[type="text"] {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            background-color: #40444b;
+            color: #fff;
+            margin-bottom: 15px;
+            outline: none;
+        }
+
+        .search-form button {
+            background-color: #00aaff;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            padding: 15px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            width: 100%;
+        }
+
+        .search-form button:hover {
+            background-color: #008ecc;
+        }
+
+        .search-results {
+            margin-top: 20px;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .search-results .card {
+            background-color: #2c2f33;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            transition: transform 0.3s;
+        }
+
+        .search-results .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .search-results .card h2 {
+            font-size: 22px;
+            margin-bottom: 10px;
+            color: #00aaff;
+        }
+
+        .search-results .card p {
+            font-size: 16px;
+            color: #b0b3b8;
+        }
+
+        .search-results .card a {
+            color: #00aaff;
+            text-decoration: none;
+        }
+
+        .search-results .card a:hover {
+            text-decoration: underline;
+        }
+
+        .search-results .card .card-content {
+            flex: 1;
+        }
+
+        .search-results .card img {
+            width: 100px;
+            height: 100px;
+            margin-left: 20px;
+            border-radius: 12px;
+            object-fit: cover;
+        }
+
+        .search-results .card.no-results {
+            text-align: center;
+            color: #b0b3b8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="search-form">
+            <h1>Search</h1>
+            <form action="." method="post">
+                {% csrf_token %}
+                <input type="text" name="search" placeholder="Search..." id="searchInput">
+                <button type="submit"><i class="fas fa-search"></i> Search</button>
+            </form>
+        </div>
+        <div class="search-results">
+            {% if result == "No search match" %}
+                <div class="card no-results">
+                    <p>No results found. Please refine your search.</p>
+                </div>
+            {% else %}
+                {% for user in result.0 %}
+                    <div class="card">
+                        <div class="card-content">
+                            <h2>User Result:</h2>
+                            <p>Username: <a href="/look-{{ user.username }}">{{ user.username }}</a></p>
+                            <p>First Name: {{ user.user.first_name }}</p>
+                            <p>Last Name: {{ user.user.last_name }}</p>
+                        </div>
+                        {% if user.pic %}
+                            <img src="{{ user.pic.url }}" alt="{{ user.username }}">
+                        {% endif %}
+                    </div>
+                {% endfor %}
+                {% for post in result.1 %}
+                    <div class="card">
+                        <div class="card-content">
+                            <h2>Post Result:</h2>
+                            <p><a href="/view-{{ post.slug }}">{{ post.title }}</a></p>
+                            <p>{{ post.content|truncatewords:30 }}</p>
+                        </div>
+                        {% if post.pic %}
+                            <img src="{{ post.pic.url }}" alt="{{ post.title }}">
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

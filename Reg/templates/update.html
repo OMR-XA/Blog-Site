@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Your Account</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-k6RqeWeci5ZR/Lv4MR0sA0FfDOMz1p/htzT12V9E1uD3e/wOK60d0B1Xac5bduv" crossorigin="anonymous">
+    <style>
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            background-color: #1d1f21;
+            color: #fff;
+            margin: 0;
+            padding: 20px; /* Add padding around the body */
+            box-sizing: border-box; /* Ensure padding is included in total width */
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Align items to the top of the container */
+            min-height: 100vh; /* Ensure full viewport height */
+        }
+        .signup-container {
+            max-width: 1000px; /* Adjust the width to be even wider */
+            padding: 20px;
+            background-color: #2c2f33;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            width: 100%; /* Fill more of the screen */
+            box-sizing: border-box; /* Ensure padding is included in the total width */
+            margin-top: 20px; /* Add margin from the top */
+        }
+
+        h1 {
+            text-align: center;
+            color: #00aaff;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 1em;
+            color: #00aaff;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #444;
+            border-radius: 10px; /* Make the textboxes more round-edged */
+            background-color: #1d1f21;
+            color: #fff;
+            box-sizing: border-box; /* Ensure the padding is included in the element's total width and height */
+        }
+
+        .password-container {
+            position: relative;
+        }
+
+        .password-container input[type="password"],
+        .password-container input[type="text"] {
+            padding-right: 40px; /* Adjust padding to make space for the icon */
+        }
+
+        .password-container .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #00aaff; /* Color to match the theme */
+        }
+
+        .profile-pic-container {
+            text-align: center;
+            margin-bottom: 20px;
+            position: relative; /* Ensure relative positioning for absolute child */
+        }
+
+        .profile-pic {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 10px;
+        }
+
+        .change-pic-btn {
+            display: block;
+            width: 100%;
+            padding: 10px 0;
+            background-color: #0074d9;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .change-pic-btn:hover {
+            background-color: #005ea6;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #0074d9;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s ease;
+            margin-top: 10px;
+        }
+
+        button.delete {
+            background-color: #dc3545;
+        }
+
+        button.logout {
+            background-color: #f0ad4e;
+        }
+
+        button:hover {
+            background-color: #005ea6;
+        }
+
+        button.delete:hover {
+            background-color: #c82333;
+        }
+
+        button.logout:hover {
+            background-color: #ec971f;
+        }
+
+        .hidden-input {
+            display: none;
+        }
+
+        .error-message {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            text-align: center;
+            background-color: #dc3545; /* Vivid red background */
+            color: #fff; /* White text */
+            padding: 10px;
+            border-radius: 4px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            z-index: 1000; /* Ensure it's above other content */
+        }
+    </style>
+</head>
+<body>
+    <div class="error-message" id="pic-error-message" style="display: none;">Profile picture not safe.</div>
+    <div class="signup-container">
+        <h1>Update Your Account</h1>
+        <form method="post" action="." enctype="multipart/form-data" id="blog-form">
+            {% csrf_token %}
+            
+            <label for="first_name">First Name</label>
+            <input type="text" id="first_name" name="first_name" value="{{ obj.user.first_name }}" placeholder="First Name">
+            
+            <label for="last_name">Last Name</label>
+            <input type="text" id="last_name" name="last_name" value="{{ obj.user.last_name }}" placeholder="Last Name">
+            
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" value="{{ obj.user.email }}" placeholder="Email Address">
+            
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" value="{{ obj.username }}" placeholder="Username">
+            
+            <label for="password">Choose a Password</label>
+            <div class="password-container">
+                <input type="password" id="password" name="password" value="{{ obj.password }}" placeholder="Choose a Password">
+                <i class="fas fa-eye toggle-password" onclick="togglePasswordVisibility()"></i>
+            </div>
+
+            <!-- Profile Picture Section -->
+            <div class="profile-pic-container">
+                <label for="profile-pic">Current Profile Picture</label>
+                {% if obj.pic %}
+                <img src="{{ obj.pic.url }}" alt="Current Profile Picture" class="profile-pic">
+                {% endif %}
+                <input type="file" id="pic-input" name="pic" accept="image/*" class="hidden-input">
+                <button type="button" class="change-pic-btn" id="change-pic-btn">Change Picture</button>
+            </div>
+
+            <!-- Add other fields as needed -->
+            <button name="update" type="submit">Update</button>
+            <button name="delete" class="delete" type="submit">Delete</button>
+            <button name="logout" class="logout" type="submit">Log Out</button>
+        </form>
+    </div>
+
+    <script>
+        function togglePasswordVisibility() {
+            var passwordField = document.getElementById("password");
+            var togglePassword = document.querySelector(".toggle-password");
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                togglePassword.classList.remove("fa-eye");
+                togglePassword.classList.add("fa-eye-slash");
+            } else {
+                passwordField.type = "password";
+                togglePassword.classList.remove("fa-eye-slash");
+                togglePassword.classList.add("fa-eye");
+            }
+        }
+
+        document.getElementById('change-pic-btn').addEventListener('click', function() {
+            document.getElementById('pic-input').click();
+        });
+
+        // Simulate unsafe pic upload error
+        setTimeout(function() {
+            document.getElementById('pic-error-message').style.display = 'block';
+        }, 3000); // Show error message after 3 seconds (for demonstration)
+    </script>
+</body>
+</html>

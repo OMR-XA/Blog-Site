@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings Page</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        /* Reset default browser styles */
+        body, h1, p, label, input, select, button {
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Set a modern font */
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            background-color: #1d1f21;
+            color: #fff;
+        }
+
+        /* Center the content */
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #2c2f33;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #00aaff;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #00aaff;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="email"],
+        .form-group input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            box-sizing: border-box;
+            border: 1px solid #444;
+            border-radius: 10px;
+            background-color: #1d1f21;
+            color: #fff;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input[type="text"]:focus,
+        .form-group input[type="email"]:focus,
+        .form-group input[type="password"]:focus {
+            border-color: #00aaff;
+            box-shadow: 0 0 10px rgba(0, 170, 255, 0.5);
+        }
+
+        /* Custom checkbox styles */
+        .form-group input[type="checkbox"] {
+            display: none;
+        }
+
+        .form-group input[type="checkbox"] + label::before {
+            content: '\f0c8'; /* Unicode for FontAwesome square */
+            font-family: "Font Awesome 5 Free";
+            font-weight: 900;
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            background-color: #007BFF;
+            color: #fff;
+            text-align: center;
+            margin-right: 10px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .form-group input[type="checkbox"]:checked + label::before {
+            content: '\f14a'; /* Unicode for FontAwesome check-square */
+            background-color: #007BFF;
+            color: #bbb;
+        }
+
+        .form-group .checkbox-label {
+            display: inline;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        /* Styled dropdown menus */
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            box-sizing: border-box;
+            border: 1px solid #444;
+            border-radius: 10px;
+            background-color: #1d1f21;
+            color: #fff;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" class="bi bi-chevron-down" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            transition: all 0.3s ease;
+        }
+
+        .form-group select:focus {
+            border-color: #00aaff;
+            box-shadow: 0 0 10px rgba(0, 170, 255, 0.5);
+        }
+
+        .form-group button {
+            width: 100%;
+            padding: 10px;
+            background-color: #0074d9;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        .form-group button:hover {
+            background-color: #005ea6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Settings</h1>
+        <form action="." method="POST">
+            {% csrf_token %}
+            <!-- Notifications Section -->
+            <div class="form-group">
+                <input type="checkbox" id="notifications" name="notifications" {% if us.notifications %}checked{% endif %}>
+                <label for="notifications" class="checkbox-label">Enable Notifications</label>
+            </div>
+            
+            <!-- Email Notifications Section -->
+            <div class="form-group">
+                <input type="checkbox" id="email-notifications" name="email_notifications" {% if us.email_notifications %}checked{% endif %}>
+                <label for="email-notifications" class="checkbox-label">Enable Email Notifications</label>
+            </div>
+            
+            <!-- Posts Visibility Section -->
+            <div class="form-group">
+                <label for="posts-visibility">Posts Visibility</label>
+                <select id="posts-visibility" name="posts_visibility">
+                    <option value="public" {% if us.posts_visibility == 'public' %}selected{% endif %}>Public</option>
+                    <option value="private" {% if us.posts_visibility == 'private' %}selected{% endif %}>Private</option>
+                    <option value="friends" {% if us.posts_visibility == 'friends' %}selected{% endif %}>Friends Only</option>
+                </select>
+            </div>
+            
+            <!-- Account Privacy Section -->
+            <div class="form-group">
+                <label for="account-privacy">Account Privacy</label>
+                <select id="account-privacy" name="account_privacy">
+                    <option value="public" {% if us.account_privacy == 'public' %}selected{% endif %}>Public</option>
+                    <option value="private" {% if us.account_privacy == 'private' %}selected{% endif %}>Private</option>
+                </select>
+            </div>
+            
+            <!-- Theme Section -->
+            <div class="form-group">
+                <label for="theme">Theme</label>
+                <select id="theme" name="theme">
+                    <option value="light" {% if us.theme == 'light' %}selected{% endif %}>Light</option>
+                    <option value="dark" {% if us.theme == 'dark' %}selected{% endif %}>Dark</option>
+                    <option value="blue" {% if us.theme == 'blue' %}selected{% endif %}>Blue</option>
+                </select>
+            </div>
+        
+            <!-- Language Preference Section -->
+            <div class="form-group">
+                <label for="language">Language Preference</label>
+                <select id="language" name="language">
+                    <option value="en" {% if us.language == 'en' %}selected{% endif %}>English</option>
+                    <option value="es" {% if us.language == 'es' %}selected{% endif %}>Spanish</option>
+                    <option value="fr" {% if us.language == 'fr' %}selected{% endif %}>French</option>
+                    <option value="de" {% if us.language == 'de' %}selected{% endif %}>German</option>
+                    <option value="ar" {% if us.language == 'ar' %}selected{% endif %}>Arabic</option>
+                </select>
+            </div>
+        
+            <!-- Submit Button -->
+            <div class="form-group">
+                <button type="submit" name="Save">Save Changes</button>
+            </div>
+        </form>
+        
+    </div>
+</body>
+</html>
